@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "405439709384",
+    "firebase_url": "https://anondo-b8270.firebaseio.com",
+    "project_id": "anondo-b8270",
+    "storage_bucket": "anondo-b8270.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:405439709384:android:300d975e3c47f8c472e5fd",
+        "android_client_info": {
+          "package_name": "co.appbrewery.flash_chat_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "405439709384-u7su3odnoqtkqb8d8l9kg56v1jl89hhd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANhW7bLbO_mHUMZh8PSna8_AbdCyhwo3U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "405439709384-u7su3odnoqtkqb8d8l9kg56v1jl89hhd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
