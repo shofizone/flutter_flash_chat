@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,22 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final _auth = FirebaseAuth.instance;
+  String messageText;
+  final _firestore = Firestore.instance;
+  String loggedUser;
+  TextEditingController _textEditingController = TextEditingController();
+
+
+
+
+  @override
+  void initState() {
+    _auth.currentUser().then((firebaseUser) {
+      loggedUser = firebaseUser.email;
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,9 +38,8 @@ class _ChatScreenState extends State<ChatScreen> {
               onPressed: () {
                 _auth.signOut();
                 Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => WelcomeScreen()),
-                        (_) => false);
+                    MaterialPageRoute(builder: (context) => WelcomeScreen()),
+                    (_) => false);
               }),
         ],
         title: Text('⚡️Chat'),
@@ -34,6 +50,65 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: _firestore.collection('message').snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasData) {
+                        List<DocumentSnapshot> messages =
+                            snapshot.data.documents.reversed.toList();
+                        return ListView.builder(
+                          reverse: true,
+                          itemCount: messages.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            if (messages[index]["sender"] == loggedUser) {
+                              return ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: Text(""),
+                                title: Material(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      messages[index]["message"],
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  messages[index]["sender"],
+                                  textAlign: TextAlign.right,
+                                ),
+                              );
+                            } else {
+                              return ListTile(
+                                title: Material(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      messages[index]["message"],
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  messages[index]["sender"],
+                                  textAlign: TextAlign.right,
+                                ),
+                                trailing: Text(""),
+                              );
+                            }
+                          },
+                        );
+                      }
+                      return Container();
+                    })),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -41,15 +116,22 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: <Widget>[
                   Expanded(
                     child: TextField(
+                      controller: _textEditingController,
                       onChanged: (value) {
-                        //Do something with the user input.
+                        messageText = value;
                       },
                       decoration: kMessageTextFieldDecoration,
                     ),
                   ),
                   FlatButton(
                     onPressed: () {
-                      //Implement send functionality.
+                      _firestore
+                          .collection("message")
+                          .document(DateTime.now().toIso8601String()+loggedUser)
+                          .setData(
+                              {"sender": loggedUser, "message": messageText});
+
+                      _textEditingController.clear();
                     },
                     child: Text(
                       'Send',
