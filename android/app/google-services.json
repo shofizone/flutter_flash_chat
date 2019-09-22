@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:405439709384:android:300d975e3c47f8c472e5fd",
+        "mobilesdk_app_id": "1:405439709384:android:0593627fc781e41a72e5fd",
         "android_client_info": {
-          "package_name": "co.appbrewery.flash_chat_flutter"
+          "package_name": "co.appbrewery.flash_chat"
         }
       },
       "oauth_client": [
