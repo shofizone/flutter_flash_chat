@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/screens/welcome_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +12,7 @@ class FlashChat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark().copyWith(
+      theme: ThemeData.light().copyWith(
         textTheme: TextTheme(
           body1: TextStyle(color: Colors.black54),
         ),
@@ -29,10 +30,23 @@ class Root extends StatefulWidget {
 class _RootState extends State<Root> {
 
   @override
-  void initState(){
-  Future.delayed(Duration(seconds: 2)).then((_){
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>WelcomeScreen()), (_)=>false);
-  });
+  void initState() {
+   final  _auth = FirebaseAuth.instance;
+
+    _auth.currentUser().then((FirebaseUser firebaseUser){
+      Future.delayed(Duration(seconds: 2)).then((_){
+        if(firebaseUser != null){
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>ChatScreen()), (_)=>false);
+        }
+
+        else{
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>WelcomeScreen()), (_)=>false);
+        }
+
+      });
+
+    });
+
 
     super.initState();
   }
